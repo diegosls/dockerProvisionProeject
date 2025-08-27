@@ -1,0 +1,67 @@
+---
+- name: Provisionar VM com Docker e subir stack WordPress
+  hosts: all
+  become: true
+  vars:
+    compose_dir: /opt/stack
+    compose_file: /opt/stack/docker-compose.yml
+
+  tasks:
+    - name: Atualizar cache APT e realizar upgrade
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist
+
+    - name: Instalar pacotes base
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Adicionar chave GPG do Docker
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: Adicionar repositório do Docker (Debian Bookworm)
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/debian bookworm stable"
+        state: present
+        filename: docker
+
+    - name: Instalar Docker Engine e Docker Compose v2
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: true
+
+    - name: Ativar e iniciar serviço Docker
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Criar diretório do compose
+      ansible.builtin.file:
+        path: "{{ compose_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Copiar arquivo docker-compose.yml
+      ansible.builtin.copy:
+        src: /vagrant/docker-compose.yml  # Arquivo sincronizado via Vagrant
+        dest: "{{ compose_file }}"
+        mode: "0644"
+
+    - name: Subir a aplicação com Docker Compose
+      ansible.builtin.command: docker compose -f "{{ compose_file }}" up -d
+      args:
+        chdir: "{{ compose_dir }}"

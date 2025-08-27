@@ -1,0 +1,15 @@
+# Pasta da imagem customizada (NÃO subir)
+nginx-image/
+
+# Arquivos do Vagrant
+.vagrant/
+
+# Arquivos de log do Vagrant
+*-cloudimg-console.log
+
+# Arquivos do VirtualBox
+*.vdi
+*.vbox-*
+
+# Arquivos temporários do Ansible
+*.retry

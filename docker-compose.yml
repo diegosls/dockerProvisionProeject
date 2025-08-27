@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  webproxy:
+    image: diegosls/nginx-l4:latest  
+    depends_on:
+      - webserver
+    ports:
+      - "8080:8080"
+    networks:
+      - wordpress
+
+  webserver:
+    image: wordpress:latest
+    environment:
+      WORDPRESS_DB_HOST: database:3306
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppass
+      WORDPRESS_DB_NAME: wpdb
+    volumes:
+      - app:/var/www/html
+    networks:
+      - wordpress
+
+  database:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: wpdb
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppass
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - my:/var/lib/mysql
+    networks:
+      - wordpress
+
+volumes:
+  app:
+  my:
+
+networks:
+  wordpress:
