@@ -43,6 +43,17 @@
         state: present
         update_cache: true
 
+    - name: Adicionar usuário vagrant ao grupo docker
+      ansible.builtin.user:
+        name: vagrant
+        groups: docker
+        append: yes
+
+    - name: Reiniciar serviço docker para aplicar grupo
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+
     - name: Ativar e iniciar serviço Docker
       ansible.builtin.service:
         name: docker
@@ -57,7 +68,7 @@
 
     - name: Copiar arquivo docker-compose.yml
       ansible.builtin.copy:
-        src: /vagrant/docker-compose.yml  # Arquivo sincronizado via Vagrant
+        src: /vagrant/docker-compose.yml
         dest: "{{ compose_file }}"
         mode: "0644"
 
