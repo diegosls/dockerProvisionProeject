@@ -50,9 +50,6 @@ provisionDocker/
 ├── Vagrantfile              # Configuração da VM
 ├── playbook_ansible.yml     # Provisionamento com Ansible  
 ├── docker-compose.yml       # Stack Docker
-└── nginx-image/             # (Local apenas - não sobe para Git)
-    ├── Dockerfile           # Imagem customizada do Nginx
-    └── nginx.conf           # Configuração de Load Balancing
 ```
 
 ## Como Executar
