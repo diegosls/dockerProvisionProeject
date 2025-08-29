@@ -19,7 +19,9 @@
           - curl
           - gnupg
           - lsb-release
+          - iputils-ping
         state: present
+        update_cache: yes
 
     - name: Adicionar chave GPG do Docker
       ansible.builtin.apt_key:
